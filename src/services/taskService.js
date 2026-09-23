@@ -58,10 +58,24 @@ const updateTask = async (id, updates) => {
 
   return data;
 };
+const deleteTask = async (id) => {
+  const { data, error } = await supabase
+    .from('tasks')
+    .delete()
+    .eq('id', id)
+    .select('id')
+    .maybeSingle();
 
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
 module.exports = {
   getAllTasks,
   createTask,
   getTaskById,
-  updateTask
+  updateTask,
+  deleteTask
 };

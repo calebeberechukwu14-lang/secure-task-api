@@ -1,7 +1,8 @@
 const {
   getAllTasks,
   createTask,
-  getTaskById
+  getTaskById,
+  updateTask
 } = require('../services/taskService');
 
 const getTasks = async (req, res, next) => {
@@ -50,9 +51,26 @@ const getTask = async (req, res, next) => {
     next(error);
   }
 };
+const putTask = async (req, res, next) => {
+  try {
+    const task = await updateTask(req.params.id, req.body);
 
+    if (!task) {
+      return res.status(404).json({
+        error: 'Task not found'
+      });
+    }
+
+    res.json({
+      task
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   getTasks,
   postTask,
-  getTask
+  getTask,
+  putTask
 };

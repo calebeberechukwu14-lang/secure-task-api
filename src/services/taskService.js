@@ -44,9 +44,24 @@ const getTaskById = async (id) => {
 
   return data;
 };
+const updateTask = async (id, updates) => {
+  const { data, error } = await supabase
+    .from('tasks')
+    .update(updates)
+    .eq('id', id)
+    .select('id, title, description, completed, created_at')
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
 
 module.exports = {
   getAllTasks,
   createTask,
-  getTaskById
+  getTaskById,
+  updateTask
 };

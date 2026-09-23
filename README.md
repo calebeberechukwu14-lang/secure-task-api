@@ -1,428 +1,232 @@
-\# Secure Task API
+# Secure Task API
 
+A RESTful task management API built with Node.js, Express, Supabase, and PostgreSQL.
 
+This project is being developed as a practical portfolio project to demonstrate backend development, REST API design, database integration, input validation, error handling, authentication, and application security practices.
 
-A RESTful task-management API built with Node.js, Express, Supabase, and PostgreSQL.
+## Current Features
 
+- REST API built with Express
+- PostgreSQL database through Supabase
+- Supabase Auth registration and login
+- JWT authentication for protected task routes
+- Request-scoped Supabase client that carries the authenticated user's JWT
+- Row Level Security (RLS) enabled in Supabase
+- Task ownership tracked through `user_id`
+- Authenticated task creation
+- Task retrieval and existing task CRUD endpoints
+- Input validation with `express-validator`
+- HTTP status codes for validation errors and missing resources
+- Centralized error handling
+- Environment variables for configuration
+- Git/GitHub version control
 
+Authorization is still being completed and verified for user-specific task reads, updates, and deletes. See the roadmap below.
 
-This project is being developed as a practical portfolio project to demonstrate backend development, REST API design, database integration, input validation, error handling, and application security practices.
+## Tech Stack
 
+- Node.js
+- Express.js
+- Supabase Auth
+- PostgreSQL
+- JavaScript
+- `express-validator`
+- Git/GitHub
 
-
-\## Current Features
-
-
-
-\- REST API built with Express
-
-\- PostgreSQL database through Supabase
-
-\- Create tasks
-
-\- Retrieve all tasks
-
-\- Retrieve a task by ID
-
-\- Input validation with `express-validator`
-
-\- HTTP status codes for validation and missing resources
-
-\- Row Level Security (RLS) enabled in Supabase
-
-\- Environment variables for configuration
-
-\- Centralized error handling
-
-\- Git/GitHub version control
-
-
-
-\## Tech Stack
-
-
-
-\- Node.js
-
-\- Express.js
-
-\- Supabase
-
-\- PostgreSQL
-
-\- JavaScript
-
-\- express-validator
-
-\- Git/GitHub
-
-
-
-\## API Endpoints
-
-
+## API Endpoints
 
 | Method | Endpoint | Description |
-
 |---|---|---|
-
-| GET | `/api/tasks` | Get all tasks |
-
+| GET | `/api/tasks` | Get tasks |
 | POST | `/api/tasks` | Create a task |
-
 | GET | `/api/tasks/:id` | Get a task by ID |
+| PUT | `/api/tasks/:id` | Update a task |
+| DELETE | `/api/tasks/:id` | Delete a task |
 
+Task routes require authentication. User-specific authorization for GET, PUT, and DELETE is still in progress and must be verified before those operations are considered complete.
 
-
-\### Create a Task
-
-
+### Create a Task
 
 `POST /api/tasks`
 
-
-
 Example request:
 
-
-
 ```json
-
 {
-
-&#x20; "title": "Learn API security",
-
-&#x20; "description": "Practice secure REST API development"
-
+  "title": "Learn API security",
+  "description": "Practice secure REST API development"
 }
-
 ```
 
+Task creation requires an authenticated user. The task is associated with that user through `user_id`.
 
-
-\### Get All Tasks
-
-
+### Get All Tasks
 
 `GET /api/tasks`
 
+Returns tasks from the database. User-specific filtering and authorization are still being verified.
 
-
-Returns the tasks stored in the database.
-
-
-
-\### Get a Single Task
-
-
+### Get a Single Task
 
 `GET /api/tasks/:id`
 
-
-
 Example:
 
-
-
 ```text
-
 GET /api/tasks/3
-
 ```
-
-
 
 If the task does not exist, the API returns:
 
-
-
 ```json
-
 {
-
-&#x20; "error": "Task not found"
-
+  "error": "Task not found"
 }
-
 ```
 
+Ownership checks for retrieving a task are still in progress.
 
+## Authentication
 
-\## Input Validation
+Users can register and log in with Supabase Auth. Authenticated requests provide a JWT, which the API uses to create a request-scoped Supabase client. This allows database operations to run in the context of the requesting user and work with Supabase RLS policies.
 
+Protecting tokens remains an important deployment and client-application responsibility. Never log tokens or include them in URLs, and use HTTPS in production.
 
+## Input Validation
 
 Task creation validates incoming data before it reaches the database.
 
-
-
 Current validation includes:
 
-
-
-\- Title is required
-
-\- Title must be a string
-
-\- Title maximum length is 100 characters
-
-\- Description must be a string when provided
-
-\- Description maximum length is 500 characters
-
-
+- Title is required
+- Title must be a string
+- Title maximum length is 100 characters
+- Description must be a string when provided
+- Description maximum length is 500 characters
 
 Invalid input returns HTTP `400 Bad Request`.
 
-
-
-\## Database Security
-
-
+## Database Security
 
 The project uses Supabase with PostgreSQL and has Row Level Security (RLS) enabled on the `tasks` table.
 
+Task ownership is recorded in `user_id`, and authenticated task creation is implemented. User-specific authorization for reading, updating, and deleting tasks is still being completed and tested. RLS policies and application-level checks must be verified together to ensure users can only access their own tasks.
 
+Do not use public development policies in a production environment.
 
-During the current development stage, temporary development policies allow public task creation and reading.
-
-
-
-These policies are intentionally temporary.
-
-
-
-As authentication and authorization are implemented, the policies will be replaced with user-specific access controls so users can only access their own tasks.
-
-
-
-\## Project Structure
-
-
+## Project Structure
 
 ```text
-
 secure-task-api/
-
 ├── src/
-
 │   ├── controllers/
-
 │   │   └── taskController.js
-
 │   ├── middleware/
-
 │   │   └── taskValidation.js
-
 │   ├── routes/
-
 │   │   └── tasks.js
-
 │   ├── services/
-
 │   │   └── taskService.js
-
 │   ├── db/
-
 │   │   └── supabase.js
-
 │   ├── app.js
-
 │   └── server.js
-
 ├── .env.example
-
 ├── .gitignore
-
 ├── package.json
-
 ├── package-lock.json
-
 └── README.md
-
 ```
 
+## Setup
 
-
-\## Setup
-
-
-
-\### 1. Clone the repository
-
-
+### 1. Clone the repository
 
 ```bash
-
 git clone <repository-url>
-
 cd secure-task-api
-
 ```
 
-
-
-\### 2. Install dependencies
-
-
+### 2. Install dependencies
 
 ```bash
-
 npm install
-
 ```
 
-
-
-\### 3. Configure environment variables
-
-
+### 3. Configure environment variables
 
 Create a `.env` file based on `.env.example`.
 
-
-
 ```env
-
-SUPABASE\_URL=your\_supabase\_project\_url
-
-SUPABASE\_PUBLISHABLE\_KEY=your\_supabase\_publishable\_key
-
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
 
+Never commit the `.env` file or expose credentials publicly. Do not put Supabase secret or service-role keys in client-side code.
 
-
-Never commit the `.env` file or expose its credentials publicly.
-
-
-
-\### 4. Start the server
-
-
+### 4. Start the server
 
 ```bash
-
 npm start
-
 ```
 
-
-
-The API will run on:
-
-
+The API will run at:
 
 ```text
-
 http://localhost:3000
-
 ```
 
+## Example Requests
 
-
-\## Example Testing
-
-
+The protected task routes require a valid Supabase access token. Supply it as a bearer token when making authenticated requests.
 
 Create a task:
 
-
-
 ```powershell
-
-Invoke-RestMethod -Uri "http://localhost:3000/api/tasks" -Method Post -ContentType "application/json" -Body '{"title":"Learn API security","description":"Practice secure REST API development"}'
-
+$headers = @{ Authorization = "Bearer <access-token>" }
+Invoke-RestMethod -Uri "http://localhost:3000/api/tasks" -Method Post -Headers $headers -ContentType "application/json" -Body '{"title":"Learn API security","description":"Practice secure REST API development"}'
 ```
 
-
-
-Retrieve all tasks:
-
-
+Retrieve tasks:
 
 ```powershell
-
-Invoke-RestMethod -Uri "http://localhost:3000/api/tasks"
-
+$headers = @{ Authorization = "Bearer <access-token>" }
+Invoke-RestMethod -Uri "http://localhost:3000/api/tasks" -Headers $headers
 ```
-
-
 
 Retrieve a task by ID:
 
-
-
 ```powershell
-
-Invoke-RestMethod -Uri "http://localhost:3000/api/tasks/3"
-
+$headers = @{ Authorization = "Bearer <access-token>" }
+Invoke-RestMethod -Uri "http://localhost:3000/api/tasks/3" -Headers $headers
 ```
 
+## Security Development Roadmap
 
+Work in progress or planned:
 
-\## Security Development Roadmap
+- Complete and verify user-specific authorization for GET, PUT, and DELETE task operations
+- Add automated API tests
+- Perform deeper security testing, including ownership and IDOR checks
+- Add rate limiting
+- Add security headers
+- Publish API documentation
+- Prepare and verify production deployment
 
-
-
-Planned improvements include:
-
-
-
-\- Update tasks
-
-\- Delete tasks
-
-\- Authentication
-
-\- Authorization
-
-\- User-specific task ownership
-
-\- Stronger Supabase RLS policies
-
-\- Automated API tests
-
-\- Security-focused testing
-
-\- API documentation
-
-\- Rate limiting
-
-\- Improved error handling
-
-\- Security headers
-
-\- Production deployment
-
-
-
-\## Learning Goals
-
-
+## Learning Goals
 
 This project is being developed to build practical experience with:
 
-
-
-\- REST API development
-
-\- Backend architecture
-
-\- PostgreSQL databases
-
-\- Authentication and authorization
-
-\- Input validation
-
-\- Access control
-
-\- Row Level Security
-
-\- API testing
-
-\- Secure coding practices
-
-\- Git/GitHub workflows
+- REST API development
+- Backend architecture
+- PostgreSQL databases
+- Authentication and authorization
+- Input validation
+- Access control
+- Row Level Security
+- API testing
+- Secure coding practices
+- Git/GitHub workflows
 
 \- OWASP-style web application security concepts
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const taskRoutes = require('./routes/tasks');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
 app.use((err, req, res, next) => {

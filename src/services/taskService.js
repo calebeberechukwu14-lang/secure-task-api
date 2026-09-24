@@ -13,13 +13,14 @@ const getAllTasks = async () => {
   return data;
 };
 
-const createTask = async ({ title, description }) => {
+const createTask = async (supabase, { title, description, userId }) => {
   const { data, error } = await supabase
     .from('tasks')
     .insert([
       {
         title,
-        description
+        description,
+        user_id: userId
       }
     ])
     .select()

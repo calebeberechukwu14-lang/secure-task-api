@@ -18,14 +18,14 @@ const getTasks = async (req, res, next) => {
   }
 };
 
-
 const postTask = async (req, res, next) => {
   try {
     const { title, description } = req.body;
 
-    const task = await createTask({
+    const task = await createTask(req.supabase, {
       title,
-      description
+      description,
+      userId: req.user.id
     });
 
     res.status(201).json({
@@ -35,6 +35,7 @@ const postTask = async (req, res, next) => {
     next(error);
   }
 };
+
 const getTask = async (req, res, next) => {
   try {
     const task = await getTaskById(req.params.id);
@@ -52,6 +53,7 @@ const getTask = async (req, res, next) => {
     next(error);
   }
 };
+
 const putTask = async (req, res, next) => {
   try {
     const task = await updateTask(req.params.id, req.body);
@@ -69,6 +71,7 @@ const putTask = async (req, res, next) => {
     next(error);
   }
 };
+
 const removeTask = async (req, res, next) => {
   try {
     const task = await deleteTask(req.params.id);
@@ -84,6 +87,7 @@ const removeTask = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getTasks,
   postTask,

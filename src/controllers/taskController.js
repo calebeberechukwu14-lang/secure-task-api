@@ -8,7 +8,7 @@ const {
 
 const getTasks = async (req, res, next) => {
   try {
-    const tasks = await getAllTasks();
+    const tasks = await getAllTasks(req.supabase);
 
     res.json({
       tasks
@@ -38,7 +38,7 @@ const postTask = async (req, res, next) => {
 
 const getTask = async (req, res, next) => {
   try {
-    const task = await getTaskById(req.params.id);
+    const task = await getTaskById(req.supabase, req.params.id);
 
     if (!task) {
       return res.status(404).json({
@@ -56,7 +56,27 @@ const getTask = async (req, res, next) => {
 
 const putTask = async (req, res, next) => {
   try {
-    const task = await updateTask(req.params.id, req.body);
+    const { title, description, completed } = req.body;
+
+    const updates = {};
+
+    if (title !== undefined) {
+      updates.title = title;
+    }
+
+    if (description !== undefined) {
+      updates.description = description;
+    }
+
+    if (completed !== undefined) {
+      updates.completed = completed;
+    }
+
+    const task = await updateTask(
+      req.supabase,
+      req.params.id,
+      updates
+    );
 
     if (!task) {
       return res.status(404).json({
@@ -74,7 +94,7 @@ const putTask = async (req, res, next) => {
 
 const removeTask = async (req, res, next) => {
   try {
-    const task = await deleteTask(req.params.id);
+    const task = await deleteTask(req.supabase, req.params.id);
 
     if (!task) {
       return res.status(404).json({

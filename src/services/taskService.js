@@ -1,9 +1,9 @@
 const supabase = require('../db/supabase');
 
-const getAllTasks = async () => {
+const getAllTasks = async (supabase) => {
   const { data, error } = await supabase
     .from('tasks')
-    .select('id, title, description, completed, created_at')
+    .select('id, title, description, completed, created_at, user_id')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -32,10 +32,10 @@ const createTask = async (supabase, { title, description, userId }) => {
 
   return data;
 };
-const getTaskById = async (id) => {
+const getTaskById = async (supabase, id) => {
   const { data, error } = await supabase
     .from('tasks')
-    .select('id, title, description, completed, created_at')
+    .select('id, title, description, completed, created_at, user_id')
     .eq('id', id)
     .maybeSingle();
 
@@ -45,12 +45,12 @@ const getTaskById = async (id) => {
 
   return data;
 };
-const updateTask = async (id, updates) => {
+const updateTask = async (supabase, id, updates) => {
   const { data, error } = await supabase
     .from('tasks')
     .update(updates)
     .eq('id', id)
-    .select('id, title, description, completed, created_at')
+    .select('id, title, description, completed, created_at, user_id')
     .maybeSingle();
 
   if (error) {
@@ -59,7 +59,7 @@ const updateTask = async (id, updates) => {
 
   return data;
 };
-const deleteTask = async (id) => {
+const deleteTask = async (supabase, id) => {
   const { data, error } = await supabase
     .from('tasks')
     .delete()
